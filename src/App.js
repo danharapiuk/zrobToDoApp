@@ -2,14 +2,13 @@ import React, { useEffect, useState } from 'react';
 import Todo from './Todo';
 import Button from '@mui/material/Button';
 import { FormControl, Input, InputLabel } from '@mui/material';
-import { collection, getDocs } from "firebase/firestore"; 
-
+import { collection, getDocs } from "firebase/firestore";
 import './App.css';
 import db from './firebase';
-import { FirebaseError } from 'firebase/app';
+import firebase from './firebase';
 
 function App() {
-  //const [todos, setTodos] = useState(['']);
+  const [todos] = useState(['']);
   const [input, setInput] = useState('');
 
   //gdy apka się ładuje to musimy pobrac dane z z bazy czy są dodane taski czy usunięte itd
@@ -19,9 +18,9 @@ function App() {
       const todoRef = collection(db, 'todos');
       let allTodos = await getDocs(todoRef);
       allTodos.forEach((doc) => {
-  // doc.data() is never undefined for query doc snapshots
-  console.log(doc.id, " => ", doc.data());
-});
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id, " => ", doc.data());
+      }); 
 
     }
     getData()
@@ -30,10 +29,9 @@ function App() {
 
   const addTodo = (event) => { //dodanie zadania na klik
     event.preventDefault(); //zakoczenie odświezania
-    
     db.collection('todos').add({
       todo: input,
-      timestamp: FirebaseError.firestore.FieldValue.serverTimestamp()
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
     })
     setInput(''); //czyszczenie inputa
   }
@@ -42,26 +40,25 @@ function App() {
     <div className="App">
       <h1>zrobToDoApp</h1>
       <form>
-        
+
         <FormControl>
           <InputLabel>Wpisz zadanie</InputLabel>
           <Input value={input} onChange={event => setInput(event.target.value)} />
         </FormControl>
 
 
-        <Button disabled={!input} type='submit' onClick={addTodo} variant='combined' color='red'>
+        <Button disabled={!input} type='submit' onClick={addTodo} variant='contined' color='red'>
           Dodaj zadania
         </Button>
       </form>
-      
+
 
       <ul>
         {todos.map(todo => (
-          <Todo text={todo}/>
+          <Todo text={todo} />
         ))}
       </ul>
     </div>
   );
 }
-
 export default App;
